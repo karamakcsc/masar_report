@@ -330,18 +330,18 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 			# acc
 			if acc_dict.entries:
 				# opening
-				data.append({})
-				if filters.get("group_by") != "Group by Voucher":
-					data.append(acc_dict.totals.opening)
+				# data.append({})
+				# if filters.get("group_by") != "Group by Voucher":
+				# 	data.append(acc_dict.totals.opening)
 
 				data += acc_dict.entries
 
 				# totals
-				data.append(acc_dict.totals.total)
+				# data.append(acc_dict.totals.total)
 
 				# closing
-				if filters.get("group_by") != "Group by Voucher":
-					data.append(acc_dict.totals.closing)
+				# if filters.get("group_by") != "Group by Voucher":
+				# 	data.append(acc_dict.totals.closing)
 		data.append({})
 	else:
 		data += entries
