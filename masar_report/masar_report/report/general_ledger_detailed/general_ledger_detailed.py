@@ -323,31 +323,31 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 	totals, entries = get_accountwise_gle(filters, accounting_dimensions, gl_entries, gle_map)
 
 	# Opening for filtered account
-	#data.append(totals.opening)
+	data.append(totals.opening)
 
 	if filters.get("group_by") != 'Group by Voucher (Consolidated)':
 		for acc, acc_dict in iteritems(gle_map):
 			# acc
 			if acc_dict.entries:
 				# opening
-				#data.append({})
-				# if filters.get("group_by") != "Group by Voucher":
-				# 	data.append(acc_dict.totals.opening)
+				data.append({})
+				if filters.get("group_by") != "Group by Voucher":
+					data.append(acc_dict.totals.opening)
 
 				data += acc_dict.entries
 
 				# totals
-				#data.append(acc_dict.totals.total)
+				# data.append(acc_dict.totals.total)
 
 				# closing
-				# if filters.get("group_by") != "Group by Voucher":
-				# 	data.append(acc_dict.totals.closing)
+				if filters.get("group_by") != "Group by Voucher":
+					data.append(acc_dict.totals.closing)
 		data.append({})
 	else:
 		data += entries
 
 	# totals
-	data.append(totals.total)
+	# data.append(totals.total)
 
 	# closing
 	data.append(totals.closing)
