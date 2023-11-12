@@ -1,0 +1,75 @@
+import requests
+import frappe
+import frappe, erpnext
+from frappe.utils import flt, cstr, nowdate, comma_and
+from frappe import throw, msgprint, _
+from frappe.custom.doctype.custom_field.custom_field import create_custom_field
+import requests , json,datetime
+from datetime import datetime
+from frappe.utils import get_request_session
+from frappe.utils import(
+        formatdate,
+        getdate,
+        DATE_FORMAT
+)
+@frappe.whitelist()
+def gl_request(company, from_date, to_date, customer, group_by=True, dimensions=True):
+    url = "http://104.131.91.208:8000/api/method/frappe.desk.query_report.run"
+    filters = {
+        "company": company,
+        "from_date": from_date,
+        "to_date": to_date,
+        "Party_Type": "Customer",
+        "Party": customer,
+        "group_by": "Group by Voucher (Consolidated)" if group_by else None,
+        "include_dimensions": 1 if dimensions else 0
+    }
+    params = {
+        "report_name": "General Ledger",
+        "filters": filters,
+        "output_format": "pdf",
+        "ignore_prepared_report": True
+    }
+    response = requests.get(url, params=params, stream=True)
+    with open(f"General_Ledger_{customer}.pdf", "wb") as pdf_file:
+        for chunk in response.iter_content(chunk_size=1024):
+            if chunk:
+                pdf_file.write(chunk)
+
+import requests
+import frappe
+import frappe, erpnext
+from frappe.utils import flt, cstr, nowdate, comma_and
+from frappe import throw, msgprint, _
+from frappe.custom.doctype.custom_field.custom_field import create_custom_field
+import requests , json,datetime
+from datetime import datetime
+from frappe.utils import get_request_session
+from frappe.utils import(
+	formatdate,
+	getdate,
+	DATE_FORMAT
+)
+@frappe.whitelist()
+def gl_request(company, from_date, to_date, customer, group_by=True, dimensions=True):
+    url = "http://104.131.91.208:8000/api/method/frappe.desk.query_report.run"
+    filters = {
+        "company": company,
+        "from_date": from_date,
+        "to_date": to_date,
+        "Party_Type": "Customer",
+        "Party": customer,
+        "group_by": "Group by Voucher (Consolidated)" if group_by else None,
+        "include_dimensions": 1 if dimensions else 0
+    }
+    params = {
+        "report_name": "General Ledger",
+        "filters": filters,
+        "output_format": "pdf",
+        "ignore_prepared_report": True
+    }
+    response = requests.get(url, params=params, stream=True)
+    with open(f"General_Ledger_{customer}.pdf", "wb") as pdf_file:
+        for chunk in response.iter_content(chunk_size=1024):
+            if chunk:
+                pdf_file.write(chunk)

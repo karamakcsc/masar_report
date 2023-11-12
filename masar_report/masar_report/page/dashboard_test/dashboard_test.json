@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2022-07-05 23:37:28.772784",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2022-07-05 23:37:28.772784",
+ "modified_by": "Administrator",
+ "module": "Masar Report",
+ "name": "dashboard-test",
+ "owner": "Administrator",
+ "page_name": "dashboard-test",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "DashBoard Test"
+}
