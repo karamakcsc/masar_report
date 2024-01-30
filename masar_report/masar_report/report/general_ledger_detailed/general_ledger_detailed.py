@@ -1,7 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-
 from collections import OrderedDict
 
 import frappe
@@ -186,20 +185,20 @@ def get_gl_entries(filters, accounting_dimensions):
 
 		distributed_cost_center_query = """
 		UNION ALL
-		SELECT name as gl_entry,
-			posting_date,
-			account,
-			party_type,
-			party,
-			voucher_type,
-			voucher_no, {dimension_fields}
-			cost_center, project,
-			against_voucher_type,
-			against_voucher,
-			account_currency,
-			remarks, against,
-			is_opening, `tabGL Entry`.creation {select_fields_with_percentage}
-		FROM `tabGL Entry`,
+		SELECT tge.name as gl_entry,
+			tge.posting_date,
+			tge.account,
+			tge.party_type,
+			tge.party,
+			tge.voucher_type,
+			tge.voucher_no, {dimension_fields} 
+			tge.cost_center, tge.project,
+			tge.against_voucher_type,
+			tge.against_voucher,
+			tge.account_currency,
+			tge.remarks, tge.against,
+			tge.is_opening, `tabGL Entry`.creation {select_fields_with_percentage}
+		FROM `tabGL Entry` tge,
 		(
 			SELECT parent, sum(percentage_allocation) as percentage_allocation
 			FROM `tabDistributed Cost Center`
@@ -207,22 +206,25 @@ def get_gl_entries(filters, accounting_dimensions):
 			AND parent NOT IN %(cost_center)s
 			GROUP BY parent
 		) as DCC_allocation
-		WHERE company=%(company)s
+		WHERE tge.company=%(company)s
 		{conditions}
-		AND posting_date <= %(to_date)s
-		AND cost_center = DCC_allocation.parent
+		AND tge.posting_date <= %(to_date)s
+		AND tge.cost_center = DCC_allocation.parent
 		""".format(dimension_fields=dimension_fields,select_fields_with_percentage=select_fields_with_percentage, conditions=get_conditions(filters).replace("and cost_center in %(cost_center)s ", ''))
 
 	gl_entries = frappe.db.sql(
 		"""
 		select
-			name as gl_entry, posting_date, account, party_type, party,
-			voucher_type, voucher_no, {dimension_fields}
-			cost_center, project,
-			against_voucher_type, against_voucher, account_currency,
-			remarks, against, is_opening, creation {select_fields}
-		from `tabGL Entry`
-		where company=%(company)s {conditions}
+			tge.name as gl_entry, tge.posting_date, tge.account, tge.party_type, tge.party,
+			tge.voucher_type, tge.voucher_no, {dimension_fields}
+			tge.cost_center, tge.project,
+			tge.against_voucher_type, tge.against_voucher, tge.account_currency,
+			tge.remarks, tge.against, tge.is_opening, tge.creation {select_fields}
+		from `tabGL Entry` tge
+		INNER JOIN `tabCustomer` tc ON tc.name = tge.party 
+		AND tc.customer_group NOT IN ("Other Customers" , "Employees") 
+		AND tc.territory NOT IN ("Jordan" , "Basra")
+		where tge.company=%(company)s {conditions}
 		{distributed_cost_center_query}
 		{order_by_statement}
 		""".format(
