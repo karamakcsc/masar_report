@@ -201,7 +201,7 @@ def get_gl_entries(filters, accounting_dimensions):
 		FROM `tabGL Entry` tge
 		INNER JOIN `tabCustomer` tc ON tc.name = tge.party 
 		AND tc.customer_group NOT IN ("Other Customers" , "Employees") 
-		AND tc.territory NOT IN ("Jordan" , "Basra"),
+		AND tc.territory NOT IN ("Jordan" , "Basra") AND tge.account = '11033000 - Employees Receivables - TRUST',
 		(
 			SELECT parent, sum(percentage_allocation) as percentage_allocation
 			FROM `tabDistributed Cost Center`
@@ -226,7 +226,7 @@ def get_gl_entries(filters, accounting_dimensions):
 		from `tabGL Entry` tge
 		INNER JOIN `tabCustomer` tc ON tc.name = tge.party 
 		AND tc.customer_group NOT IN ("Other Customers" , "Employees") 
-		AND tc.territory NOT IN ("Jordan" , "Basra")
+		AND tc.territory NOT IN ("Jordan" , "Basra") AND tge.account = '11033000 - Employees Receivables - TRUST'
 		where tge.company=%(company)s {conditions}
 		{distributed_cost_center_query}
 		{order_by_statement}
