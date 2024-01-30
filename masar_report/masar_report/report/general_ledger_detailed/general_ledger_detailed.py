@@ -224,7 +224,9 @@ def get_gl_entries(filters, accounting_dimensions):
 			tge.against_voucher_type, tge.against_voucher, tge.account_currency,
 			tge.remarks, tge.against, tge.is_opening, tge.creation {select_fields}
 		from `tabGL Entry` tge
-		
+		INNER JOIN `tabCustomer` tc ON tc.name = tge.party 
+		AND tc.customer_group NOT IN ("Other Customers" , "Employees") 
+		AND tc.territory NOT IN ("Jordan" , "Basra")
 		where tge.company=%(company)s {conditions}
 		{distributed_cost_center_query}
 		{order_by_statement}
