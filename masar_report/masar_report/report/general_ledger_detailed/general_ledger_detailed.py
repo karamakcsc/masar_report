@@ -198,10 +198,7 @@ def get_gl_entries(filters, accounting_dimensions):
 			tge.account_currency,
 			tge.remarks, tge.against,
 			tge.is_opening, `tabGL Entry`.creation {select_fields_with_percentage}
-		FROM `tabGL Entry` tge
-		INNER JOIN `tabCustomer` tc ON tc.name = tge.party 
-		AND tc.customer_group NOT IN ("Other Customers" , "Employees") 
-		AND tc.territory NOT IN ("Jordan" , "Basra") AND tge.account = '11033000 - Employees Receivables - TRUST',
+		FROM `tabGL Entry` tge,
 		(
 			SELECT parent, sum(percentage_allocation) as percentage_allocation
 			FROM `tabDistributed Cost Center`
@@ -217,19 +214,23 @@ def get_gl_entries(filters, accounting_dimensions):
 
 	gl_entries = frappe.db.sql(
 		"""
-		select
-			tge.name as gl_entry, tge.posting_date, tge.account, tge.party_type, tge.party,
-			tge.voucher_type, tge.voucher_no, {dimension_fields}
-			tge.cost_center, tge.project,
-			tge.against_voucher_type, tge.against_voucher, tge.account_currency,
-			tge.remarks, tge.against, tge.is_opening, tge.creation {select_fields}
-		from `tabGL Entry` tge
-		INNER JOIN `tabCustomer` tc ON tc.name = tge.party 
-		AND tc.customer_group NOT IN ("Other Customers" , "Employees") 
-		AND tc.territory NOT IN ("Jordan" , "Basra") AND tge.account = '11033000 - Employees Receivables - TRUST'
-		where tge.company=%(company)s {conditions}
-		{distributed_cost_center_query}
-		{order_by_statement}
+		SELECT
+    tge.name AS gl_entry, tge.posting_date, tge.account, tge.party_type, tge.party,
+    tge.voucher_type, tge.voucher_no, {dimension_fields}
+    tge.cost_center, tge.project,
+    tge.against_voucher_type, tge.against_voucher, tge.account_currency,
+    tge.remarks, tge.against, tge.is_opening, tge.creation {select_fields}
+FROM 
+    `tabGL Entry` tge
+    LEFT JOIN `tabCustomer` tc ON tge.party = tc.name
+WHERE 
+    tc.name IS NOT NULL -- Ensuring there is a matching customer record
+    AND tc.customer_group NOT IN ('Other Customers', 'Employees') 
+	AND tc.territory NOT IN ("Jordan" , "Basra")
+	AND tge.company = %(company)s 
+    {conditions}
+    {distributed_cost_center_query}
+    {order_by_statement}
 		""".format(
 			dimension_fields=dimension_fields, select_fields=select_fields, conditions=get_conditions(filters), distributed_cost_center_query=distributed_cost_center_query,
 			order_by_statement=order_by_statement
