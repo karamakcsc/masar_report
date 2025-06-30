@@ -13,12 +13,12 @@ frappe.query_reports["General Ledger Detailed"] = {
 			"default": frappe.defaults.get_user_default("Company"),
 			"reqd": 1
 		},
-		{
-			"fieldname":"finance_book",
-			"label": __("Finance Book"),
-			"fieldtype": "Link",
-			"options": "Finance Book"
-		},
+		// {
+		// 	"fieldname":"finance_book",
+		// 	"label": __("Finance Book"),
+		// 	"fieldtype": "Link",
+		// 	"options": "Finance Book"
+		// },
 		{
 			"fieldname":"from_date",
 			"label": __("From Date"),
@@ -46,14 +46,14 @@ frappe.query_reports["General Ledger Detailed"] = {
 				});
 			}
 		},
-		{
-			"fieldname":"voucher_no",
-			"label": __("Voucher No"),
-			"fieldtype": "Data",
-			on_change: function() {
-				frappe.query_report.set_filter_value('group_by', "Group by Voucher (Consolidated)");
-			}
-		},
+		// {
+		// 	"fieldname":"voucher_no",
+		// 	"label": __("Voucher No"),
+		// 	"fieldtype": "Data",
+		// 	on_change: function() {
+		// 		frappe.query_report.set_filter_value('group_by', "Group by Voucher (Consolidated)");
+		// 	}
+		// },
 		{
 			"fieldtype": "Break",
 		},
@@ -145,53 +145,53 @@ frappe.query_reports["General Ledger Detailed"] = {
 			"fieldtype": "Select",
 			"options": erpnext.get_presentation_currency_list()
 		},
-		{
-			"fieldname":"cost_center",
-			"label": __("Cost Center"),
-			"fieldtype": "MultiSelectList",
-			get_data: function(txt) {
-				return frappe.db.get_link_options('Cost Center', txt, {
-					company: frappe.query_report.get_filter_value("company")
-				});
-			}
-		},
-		{
-			"fieldname":"project",
-			"label": __("Project"),
-			"fieldtype": "MultiSelectList",
-			get_data: function(txt) {
-				return frappe.db.get_link_options('Project', txt, {
-					company: frappe.query_report.get_filter_value("company")
-				});
-			}
-		},
+		// {
+		// 	"fieldname":"cost_center",
+		// 	"label": __("Cost Center"),
+		// 	"fieldtype": "MultiSelectList",
+		// 	get_data: function(txt) {
+		// 		return frappe.db.get_link_options('Cost Center', txt, {
+		// 			company: frappe.query_report.get_filter_value("company")
+		// 		});
+		// 	}
+		// },
+		// {
+		// 	"fieldname":"project",
+		// 	"label": __("Project"),
+		// 	"fieldtype": "MultiSelectList",
+		// 	get_data: function(txt) {
+		// 		return frappe.db.get_link_options('Project', txt, {
+		// 			company: frappe.query_report.get_filter_value("company")
+		// 		});
+		// 	}
+		// },
 		{
 			"fieldname": "include_dimensions",
 			"label": __("Consider Accounting Dimensions"),
 			"fieldtype": "Check",
 			"default": 1
 		},
-		{
-			"fieldname": "show_opening_entries",
-			"label": __("Show Opening Entries"),
-			"fieldtype": "Check"
-		},
-		{
-			"fieldname": "include_default_book_entries",
-			"label": __("Include Default Book Entries"),
-			"fieldtype": "Check"
-		},
-		{
-			"fieldname": "show_cancelled_entries",
-			"label": __("Show Cancelled Entries"),
-			"fieldtype": "Check"
-		},
-		{
-			"fieldname": "show_net_values_in_party_account",
-			"label": __("Show Net Values in Party Account"),
-			"fieldtype": "Check"
-		}
+		// {
+		// 	"fieldname": "show_opening_entries",
+		// 	"label": __("Show Opening Entries"),
+		// 	"fieldtype": "Check"
+		// },
+		// {
+		// 	"fieldname": "include_default_book_entries",
+		// 	"label": __("Include Default Book Entries"),
+		// 	"fieldtype": "Check"
+		// },
+		// {
+		// 	"fieldname": "show_cancelled_entries",
+		// 	"label": __("Show Cancelled Entries"),
+		// 	"fieldtype": "Check"
+		// },
+		// {
+		// 	"fieldname": "show_net_values_in_party_account",
+		// 	"label": __("Show Net Values in Party Account"),
+		// 	"fieldtype": "Check"
+		// }
 	]
 }
 
-erpnext.utils.add_dimensions('General Ledger', 15)
+erpnext.utils.add_dimensions('General Ledger Detailed', 15)

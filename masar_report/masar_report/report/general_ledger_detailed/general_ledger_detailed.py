@@ -238,7 +238,22 @@ WHERE
 		filters, as_dict=1)
 
 	if filters.get('presentation_currency'):
-		return convert_to_presentation_currency(gl_entries, currency_map, filters.get('company'))
+		if filters.get('presentation_currency') == "IQD":
+			for gle in gl_entries:
+				gle['debit'] = gle.get('debit', 0) * 1350
+				gle['credit'] = gle.get('credit', 0) * 1350
+				gle['debit_in_account_currency'] = gle.get('debit_in_account_currency', 0) * 1350
+				gle['credit_in_account_currency'] = gle.get('credit_in_account_currency', 0) * 1350
+			return gl_entries
+		elif filters.get('presentation_currency') == "JOD":
+			for gle in gl_entries:
+				gle['debit'] = gle.get('debit', 0) * 0.71
+				gle['credit'] = gle.get('credit', 0) * 0.71
+				gle['debit_in_account_currency'] = gle.get('debit_in_account_currency', 0) * 0.71
+				gle['credit_in_account_currency'] = gle.get('credit_in_account_currency', 0) * 0.71
+			return gl_entries
+		else:
+			return convert_to_presentation_currency(gl_entries, currency_map)
 	else:
 		return gl_entries
 
