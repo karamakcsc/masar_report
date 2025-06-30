@@ -175,7 +175,11 @@ def get_gl_entries(filters, accounting_dimensions):
 	dimension_fields = ""
 	if accounting_dimensions:
 		dimension_fields = ', '.join(accounting_dimensions) + ','
-
+	transaction_currency_fields = ""
+	if filters.get("add_values_in_transaction_currency"):
+		transaction_currency_fields = (
+			"debit_in_transaction_currency, credit_in_transaction_currency, transaction_currency,"
+		)
 	distributed_cost_center_query = ""
 	if filters and filters.get('cost_center'):
 		select_fields_with_percentage = """, debit*(DCC_allocation.percentage_allocation/100) as debit,
@@ -213,29 +217,21 @@ def get_gl_entries(filters, accounting_dimensions):
 		""".format(dimension_fields=dimension_fields,select_fields_with_percentage=select_fields_with_percentage, conditions=get_conditions(filters).replace("and cost_center in %(cost_center)s ", ''))
 
 	gl_entries = frappe.db.sql(
-		"""
-		SELECT
-    tge.name AS gl_entry, tge.posting_date, tge.account, tge.party_type, tge.party,
-    tge.voucher_type, tge.voucher_no, {dimension_fields}
-    tge.cost_center, tge.project,
-    tge.against_voucher_type, tge.against_voucher, tge.account_currency,
-    tge.remarks, tge.against, tge.is_opening, tge.creation {select_fields}
-FROM 
-    `tabGL Entry` tge
-    LEFT JOIN `tabCustomer` tc ON tge.party = tc.name
-WHERE 
-    tc.name IS NOT NULL -- Ensuring there is a matching customer record
-    AND tc.customer_group NOT IN ('Other Customers', 'Employees') 
-	AND tc.territory NOT IN ("Jordan" , "Basra")
-	AND tge.company = %(company)s 
-    {conditions}
-    {distributed_cost_center_query}
-    {order_by_statement}
-		""".format(
-			dimension_fields=dimension_fields, select_fields=select_fields, conditions=get_conditions(filters), distributed_cost_center_query=distributed_cost_center_query,
-			order_by_statement=order_by_statement
-		),
-		filters, as_dict=1)
+		f"""
+		select
+			tge.name AS gl_entry, tge.posting_date, tge.account, tge.party_type, tge.party,
+			tge.voucher_type, tge.voucher_no, {dimension_fields}
+			tge.cost_center, tge.project,
+			tge.against_voucher_type, tge.against_voucher, tge.account_currency,
+			tge.remarks, tge.against, tge.is_opening, tge.creation {select_fields}
+		from `tabGL Entry` tge
+		where company=%(company)s {get_conditions(filters)}
+		{order_by_statement}
+	""",
+		filters,
+		as_dict=1,
+	)
+
 
 	if filters.get('presentation_currency'):
 		if filters.get('presentation_currency') == "IQD":
@@ -363,13 +359,13 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 				# closing
 				# if filters.get("group_by") != "Group by Voucher":
 				# 	data.append(acc_dict.totals.closing)
-		data.append({})
+		# data.append({})
 	else:
 		data += entries
 
 	# totals
 	data.append(totals.total)
-
+	# data.append({})
 	# closing
 	data.append(totals.closing)
 
