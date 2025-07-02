@@ -23,7 +23,6 @@
 		white-space: nowrap;
 	}
 
-	/* Remarks column allows wrapping */
 	.remarks-col {
 		text-align: right;
 		direction: rtl;
@@ -31,7 +30,6 @@
 		word-break: break-word;
 	}
 
-	/* Responsive print font */
 	@media print {
 		body {
 			font-size: 10px;
@@ -102,10 +100,10 @@
 						{%= data[i].party || data[i].account %}<br>
 					{% } %}
 
-					{% if(data[i].remarks) { %}
+					
 						{%
 							let clean_remarks = (data[i].remarks || "").split("Reference #")[0].trim();
-							if (clean_remarks === "No Remarks") {
+							if (!clean_remarks || clean_remarks === "No Remarks") {
 								if (data[i].voucher_type === "Payment Entry") {
 									clean_remarks = "سند قبض";
 								} else if (data[i].voucher_type === "Sales Invoice") {
@@ -114,9 +112,7 @@
 							}
 						%}
 						{%= clean_remarks %}
-					{% } else if(data[i].bill_no) { %}
-						{%= __("Supplier Invoice No") %}: {%= data[i].bill_no %}
-					{% } %}
+					
 					</span>
 				</td>
 				<td>{%= format_currency(data[i].debit, filters.presentation_currency || data[i].account_currency) %}</td>
